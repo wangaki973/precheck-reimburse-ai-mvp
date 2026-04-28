@@ -961,9 +961,57 @@
   <script>
     (function () {
       var API_BASE = "/api";
+      var isStaticDemoMode = false;
       const navItems = document.querySelectorAll(".nav-item");
       const pages = document.querySelectorAll(".page");
       var recognizedData = null;
+
+      function getMockReimbursements() {
+        return [
+          { id: "BX2026001", type: "差旅", amount: 2280, date: "2026-04-16", status: "审核中" },
+          { id: "BX2026002", type: "餐饮", amount: 368, date: "2026-04-12", status: "已通过" },
+          { id: "BX2026003", type: "交通", amount: 980, date: "2026-03-30", status: "已驳回" },
+          { id: "BX2026004", type: "办公", amount: 420, date: "2026-03-18", status: "已通过" },
+        ];
+      }
+
+      function getMockOcrData(fileName) {
+        return {
+          date: "2026-04-28",
+          category: "差旅费",
+          amount: 1680,
+          description: "客户拜访产生的往返交通与住宿费用",
+          department: "销售中心",
+          projectCode: "PRJ-2026-011",
+          approver: "李经理",
+          applicant: "张三",
+          fileName: fileName || "invoice.png",
+        };
+      }
+
+      function getMockPrecheck(payload) {
+        var amount = Number((payload && payload.amount) || 0);
+        var category = (payload && payload.category) || "差旅费";
+        if (amount > 3000) {
+          return {
+            result: "拦截",
+            reason: "金额超过当前类别默认阈值",
+            recommendation: "请补充审批说明并走特殊审批流程",
+          };
+        }
+        if (amount > 1500) {
+          return {
+            result: "预警",
+            reason: "金额接近阈值上限",
+            recommendation: "建议补充业务背景与同行程佐证",
+          };
+        }
+        return {
+          result: "通过",
+          reason: category + "金额处于规则允许范围内",
+          recommendation: "可提交财务审核",
+        };
+      }
 
       navItems.forEach(function (item) {
         item.addEventListener("click", function () {
@@ -1036,7 +1084,21 @@
             })
             .join("");
         } catch (error) {
-          reimbursementsBody.innerHTML = '<tr><td colspan="5">加载失败，请稍后重试</td></tr>';
+          isStaticDemoMode = true;
+          var list = getMockReimbursements();
+          reimbursementsBody.innerHTML = list
+            .map(function (item) {
+              return (
+                "<tr>" +
+                "<td>" + item.id + "</td>" +
+                "<td>" + item.type + "</td>" +
+                '<td class="amt">' + formatCurrency(item.amount) + "</td>" +
+                "<td>" + item.date + "</td>" +
+                "<td><span class=\"status-dot " + statusClass(item.status) + "\"></span>" + item.status + "</td>" +
+                "</tr>"
+              );
+            })
+            .join("");
         }
       }
 
@@ -1091,7 +1153,9 @@
             const json = await resp.json();
             appendAiMessage("预检结果：" + json.result + "。 " + json.reason + " " + json.recommendation);
           } catch (error) {
-            appendAiMessage("预检失败，请稍后重试。");
+            isStaticDemoMode = true;
+            var fallback = getMockPrecheck(recognizedData || { amount: 1680, category: "交通费" });
+            appendAiMessage("预检结果：" + fallback.result + "。 " + fallback.reason + " " + fallback.recommendation + "（静态演示模式）");
           }
         });
       }
@@ -1143,7 +1207,17 @@
                 "用途：" + json.data.description
             );
           } catch (error) {
-            appendAiMessage("OCR识别失败，请稍后重试。");
+            isStaticDemoMode = true;
+            var fallbackOcr = getMockOcrData(f.name);
+            recognizedData = fallbackOcr;
+            appendAiMessage(
+              "OCR识别完成（静态演示模式）：<br>" +
+                "类目：" + fallbackOcr.category + "<br>" +
+                "金额：" + formatCurrency(fallbackOcr.amount) + "<br>" +
+                "审批人：" + fallbackOcr.approver + "<br>" +
+                "申请者：" + fallbackOcr.applicant + "<br>" +
+                "用途：" + fallbackOcr.description
+            );
           }
         });
       }

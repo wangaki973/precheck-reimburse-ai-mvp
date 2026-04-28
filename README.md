@@ -31,3 +31,10 @@ Open: `http://localhost:3000`
 
 See `ai-precheck-flowchart-vertical.png`.
 
+## Demo Links
+
+- GitHub Pages (static fallback): `https://wangaki973.github.io/precheck-reimburse-ai-mvp/`
+- Fullstack deploy (recommended): deploy this repo to Render/Railway with `npm start`
+
+> Note: GitHub Pages only hosts static files, so backend API calls fall back to mock data in static demo mode.
+
