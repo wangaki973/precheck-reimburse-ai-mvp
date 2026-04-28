@@ -1,7 +1,7 @@
 {
-  "name": "my-demo2",
+  "name": "precheck-reimburse-ai-mvp",
   "version": "1.0.0",
-  "description": "",
+  "description": "MVP for AI-powered reimbursement precheck",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
