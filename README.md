@@ -31,6 +31,10 @@ Open: `http://localhost:3000`
 
 See `ai-precheck-flowchart-vertical.png`.
 
+## PRD
+
+See `AI报销预检助手 v1.3.md`.
+
 ## Demo Links
 
 - GitHub Pages (static fallback): `https://wangaki973.github.io/precheck-reimburse-ai-mvp/`
