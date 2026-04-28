@@ -1,0 +1,26 @@
+flowchart TB
+    U["用户"] --> FE["前端页面 index.html"]
+
+    FE -->|"分支A：上传发票"| API1["POST /api/ocr"]
+    API1 --> BE1["后端 server.js"]
+    BE1 --> OCR["返回识别字段<br/>日期 类目 金额 用途 审批人 申请者"]
+    OCR --> FE2["聊天区展示识别结果"]
+    FE2 -->|"点击 是 发起一审"| API2["POST /api/precheck"]
+    API2 --> BE2["规则判断逻辑"]
+    BE2 --> CHECK["返回结果<br/>通过 预警 拦截 + 原因 + 建议"]
+    CHECK --> FE3["聊天区展示预检反馈"]
+
+    FE -->|"分支B：进入我的报销"| API3["GET /api/reimbursements"]
+    API3 --> BE3["返回报销记录列表 JSON"]
+    BE3 --> FE4["渲染表格<br/>单号 类型 金额 提交日 进度"]
+    FE4 --> EXP["一键导出报销明细单<br/>默认导出全部 支持按时间和类型筛选"]
+
+    classDef front fill:#eaf3ff,stroke:#4a82ff,stroke-width:1px,color:#0f2a5a;
+    classDef back fill:#eefbf3,stroke:#36a269,stroke-width:1px,color:#12472e;
+    classDef api fill:#fff4e8,stroke:#dd8a2f,stroke-width:1px,color:#5a340f;
+    classDef user fill:#f4f0ff,stroke:#7e59d1,stroke-width:1px,color:#2b1b5a;
+
+    class U user;
+    class FE1,FE2,FE3,FE4,FE5,EXP front;
+    class BE1,BE2,BE3,OCR,CHECK back;
+    class API1,API2,API3 api;
