@@ -38,3 +38,12 @@ See `ai-precheck-flowchart-vertical.png`.
 
 > Note: GitHub Pages only hosts static files, so backend API calls fall back to mock data in static demo mode.
 
+## Deploy (Render Fullstack)
+
+1. Open [Render Dashboard](https://dashboard.render.com/) and click **New +** -> **Blueprint**.
+2. Select this repo: `wangaki973/precheck-reimburse-ai-mvp`.
+3. Keep default settings (Render reads `render.yaml` automatically), then click **Apply**.
+4. Wait for build success, then open the generated `onrender.com` URL.
+
+Health check path: `/healthz`
+

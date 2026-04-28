@@ -7,6 +7,10 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static(__dirname));
 
+app.get("/healthz", (req, res) => {
+  res.status(200).json({ ok: true, service: "precheck-reimburse-ai-mvp" });
+});
+
 const reimbursements = [
   { id: "BX-202604-0102", type: "差旅交通", amount: 18600, date: "2026-04-26", status: "审核中" },
   { id: "BX-202604-0089", type: "住宿", amount: 12400, date: "2026-04-22", status: "已驳回" },
